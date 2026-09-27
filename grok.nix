@@ -43,6 +43,7 @@ symlinkJoin {
         --set GROK_TELEMETRY_TRACE_UPLOAD false \
         --set GROK_ERROR_REPORTING false \
         --set GROK_FEEDBACK_ENABLED false \
+        --set GROK_MEMORY false \
         --run ${installPonytail}
     done
   '';
