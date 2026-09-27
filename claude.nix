@@ -1,7 +1,9 @@
 {
   symlinkJoin,
   makeShellWrapper,
+  ponytail,
   claude-code,
+  nodejs,
 }:
 let
   version = "2.1.274";
@@ -23,6 +25,8 @@ symlinkJoin {
     wrapProgram $out/bin/claude \
       --set DISABLE_TELEMETRY 1 \
       --set DISABLE_ERROR_REPORTING 1 \
-      --set CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY 1
+      --set CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY 1 \
+      --add-flags "--plugin-dir ${ponytail}" \
+      --prefix PATH : ${nodejs}/bin
   '';
 }
