@@ -1,4 +1,6 @@
 {
+  symlinkJoin,
+  makeShellWrapper,
   claude-code,
 }:
 let
@@ -13,4 +15,14 @@ let
     };
   };
 in
-package
+symlinkJoin {
+  inherit (package) name;
+  paths = [ package ];
+  nativeBuildInputs = [ makeShellWrapper ];
+  postBuild = ''
+    wrapProgram $out/bin/claude \
+      --set DISABLE_TELEMETRY 1 \
+      --set DISABLE_ERROR_REPORTING 1 \
+      --set CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY 1
+  '';
+}
