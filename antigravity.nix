@@ -1,5 +1,10 @@
 {
+  lib,
+  symlinkJoin,
+  makeShellWrapper,
   fetchurl,
+  writeShellScript,
+  jq,
   antigravity-cli,
 }:
 let
@@ -14,5 +19,50 @@ let
       inherit sha512;
     };
   };
+
+  config = {
+    ".gemini/config/config.json".telemetryEnabled = false;
+    ".gemini/antigravity-cli/settings.json".showFeedbackSurvey = false;
+  };
+
+  enforceConfig = writeShellScript "agy-enforce-config" ''
+    merge() {
+      local file="$HOME/$1" overrides="$2" tmp
+      local jq=${lib.getExe jq}
+
+      if [ -s "$file" ] && "$jq" -e --argjson o "$overrides" \
+           '. as $s | $o | to_entries | all(.value == $s[.key])' "$file" >/dev/null 2>&1; then
+        return
+      fi
+      if [ -L "$file" ]; then
+        echo "agy: $file — симлинк, не изменяю его; выставьте в нём вручную: $overrides" >&2
+        return
+      fi
+
+      mkdir -p "$(dirname "$file")"
+      [ -s "$file" ] || echo '{}' >"$file"
+      tmp=$(mktemp "$file.XXXXXX")
+      if "$jq" --argjson o "$overrides" '. + $o' "$file" >"$tmp"; then
+        mv "$tmp" "$file"
+      else
+        echo "agy: не удалось разобрать $file, в нём НЕ выставлено: $overrides" >&2
+        rm -f "$tmp"
+      fi
+    }
+
+    ${lib.concatStrings (
+      lib.mapAttrsToList (file: overrides: ''
+        merge ${lib.escapeShellArg file} ${lib.escapeShellArg (builtins.toJSON overrides)}
+      '') config
+    )}
+  '';
 in
-package
+symlinkJoin {
+  inherit (package) name;
+  paths = [ package ];
+  nativeBuildInputs = [ makeShellWrapper ];
+  postBuild = ''
+    wrapProgram $out/bin/agy \
+      --run ${enforceConfig}
+  '';
+}
