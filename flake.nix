@@ -14,6 +14,7 @@
     {
       devShells.x86_64-linux.default = pkgs.mkShellNoCC {
         packages = map (agent: pkgs.callPackage agent { }) [
+          ./antigravity.nix
           ./claude.nix
           ./grok.nix
         ];
