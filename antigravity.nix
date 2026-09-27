@@ -2,9 +2,11 @@
   lib,
   symlinkJoin,
   makeShellWrapper,
+  ponytail,
   fetchurl,
   writeShellScript,
   jq,
+  diffutils,
   antigravity-cli,
 }:
 let
@@ -56,6 +58,12 @@ let
       '') config
     )}
   '';
+
+  installPonytail = writeShellScript "agy-install-ponytail" ''
+    ${diffutils}/bin/cmp -s ${ponytail}/gemini-extension.json "$HOME/.gemini/config/plugins/ponytail/gemini-extension.json" ||
+      ${package}/bin/agy plugin install ${ponytail} >/dev/null 2>&1 ||
+      echo "agy: не удалось установить плагин ponytail" >&2
+  '';
 in
 symlinkJoin {
   inherit (package) name;
@@ -63,6 +71,7 @@ symlinkJoin {
   nativeBuildInputs = [ makeShellWrapper ];
   postBuild = ''
     wrapProgram $out/bin/agy \
-      --run ${enforceConfig}
+      --run ${enforceConfig} \
+      --run ${installPonytail}
   '';
 }
