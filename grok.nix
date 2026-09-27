@@ -1,4 +1,6 @@
 {
+  symlinkJoin,
+  makeShellWrapper,
   fetchurl,
   grok-build,
 }:
@@ -14,4 +16,18 @@ let
     };
   };
 in
-package
+symlinkJoin {
+  inherit (package) name;
+  paths = [ package ];
+  nativeBuildInputs = [ makeShellWrapper ];
+  postBuild = ''
+    for bin in grok agent; do
+      wrapProgram $out/bin/$bin \
+        --set GROK_TELEMETRY_ENABLED false \
+        --set GROK_TELEMETRY_MIXPANEL_ENABLED false \
+        --set GROK_TELEMETRY_TRACE_UPLOAD false \
+        --set GROK_ERROR_REPORTING false \
+        --set GROK_FEEDBACK_ENABLED false
+    done
+  '';
+}
