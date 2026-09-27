@@ -26,6 +26,10 @@ symlinkJoin {
       --set DISABLE_TELEMETRY 1 \
       --set DISABLE_ERROR_REPORTING 1 \
       --set CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY 1 \
+      --set DISABLE_FEEDBACK_COMMAND 1 \
+      --set DISABLE_BUG_COMMAND 1 \
+      --set CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC 1 \
+      --set CLAUDE_CODE_DISABLE_AUTO_MEMORY 1 \
       --add-flags "--plugin-dir ${ponytail}" \
       --prefix PATH : ${nodejs}/bin
   '';
