@@ -1,9 +1,11 @@
 {
+  lib,
   symlinkJoin,
   makeShellWrapper,
   ponytail,
   fetchurl,
   writeShellScript,
+  jq,
   grok-build,
 }:
 let
@@ -20,15 +22,18 @@ let
 
   installPonytail = writeShellScript "grok-install-ponytail" ''
     grok=${package}/bin/grok
-    case "$("$grok" plugin list 2>/dev/null)" in
-      *${ponytail}*) ;;
-      *)
-        "$grok" plugin uninstall ponytail >/dev/null 2>&1
-        "$grok" plugin install ${ponytail} --trust >/dev/null 2>&1 &&
-          "$grok" plugin enable ponytail >/dev/null 2>&1 ||
-          echo "grok: не удалось установить плагин ponytail" >&2
-        ;;
-    esac
+    src=${ponytail}
+    if ! list=$("$grok" plugin list --json 2>/dev/null); then
+      echo "grok: не удалось прочитать список плагинов" >&2
+      exit 0
+    fi
+    if printf '%s' "$list" | ${lib.getExe jq} -e --arg src "$src" 'any(.[]; .source == $src)' >/dev/null; then
+      exit 0
+    fi
+    "$grok" plugin uninstall ponytail >/dev/null 2>&1 || true
+    "$grok" plugin install "$src" --trust >/dev/null 2>&1 &&
+      "$grok" plugin enable ponytail >/dev/null 2>&1 ||
+      echo "grok: не удалось установить плагин ponytail" >&2
   '';
 in
 symlinkJoin {

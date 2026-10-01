@@ -6,7 +6,6 @@
   fetchurl,
   writeShellScript,
   jq,
-  diffutils,
   antigravity-cli,
 }:
 let
@@ -60,8 +59,13 @@ let
   '';
 
   installPonytail = writeShellScript "agy-install-ponytail" ''
-    ${diffutils}/bin/cmp -s ${ponytail}/gemini-extension.json "$HOME/.gemini/config/plugins/ponytail/gemini-extension.json" ||
-      ${package}/bin/agy plugin install ${ponytail} >/dev/null 2>&1 ||
+    dest="$HOME/.gemini/config/plugins/ponytail"
+    stamp="$dest/.agentura-source"
+    if [ "$(cat "$stamp" 2>/dev/null || true)" = "${ponytail}" ]; then
+      exit 0
+    fi
+    ${package}/bin/agy plugin install ${ponytail} >/dev/null 2>&1 &&
+      printf '%s\n' ${ponytail} >"$stamp" ||
       echo "agy: не удалось установить плагин ponytail" >&2
   '';
 in
