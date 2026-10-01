@@ -14,14 +14,28 @@
         system = "x86_64-linux";
         config.allowUnfree = true;
       };
+      agents = builtins.mapAttrs (
+        _: file: pkgs.newScope { inherit ponytail; } file { }
+      ) {
+        antigravity = ./antigravity.nix;
+        claude = ./claude.nix;
+        grok = ./grok.nix;
+      };
+      shell = names: pkgs.mkShellNoCC {
+        packages = map (name: agents.${name}) names;
+      };
     in
     {
-      devShells.x86_64-linux.default = pkgs.mkShellNoCC {
-        packages = map (agent: pkgs.newScope { inherit ponytail; } agent { }) [
-          ./antigravity.nix
-          ./claude.nix
-          ./grok.nix
+      packages.x86_64-linux = agents;
+      devShells.x86_64-linux = {
+        default = shell [
+          "antigravity"
+          "claude"
+          "grok"
         ];
+        antigravity = shell [ "antigravity" ];
+        claude = shell [ "claude" ];
+        grok = shell [ "grok" ];
       };
     };
 }
