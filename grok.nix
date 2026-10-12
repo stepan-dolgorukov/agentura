@@ -49,6 +49,12 @@ symlinkJoin {
         --set GROK_ERROR_REPORTING false \
         --set GROK_FEEDBACK_ENABLED false \
         --set GROK_MEMORY false \
+        --set GROK_DISABLE_AUTOUPDATER 1 \
+        --set GROK_CAMPAIGNS 0 \
+        --set GROK_PROMPT_SUGGESTIONS 0 \
+        --set GROK_TITLE_REFRESH 0 \
+        --set GROK_TURN_SUMMARY 0 \
+        --set GROK_SESSION_RECAP 0 \
         --run ${installPonytail}
     done
   '';
