@@ -21,8 +21,8 @@ let
     };
   };
 
+  # config.json не содержит телеметрии: её задаёт сервер (UserSettings.telemetry_enabled).
   config = {
-    ".gemini/config/config.json".telemetryEnabled = false;
     ".gemini/antigravity-cli/settings.json".showFeedbackSurvey = false;
   };
 
