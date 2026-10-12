@@ -22,7 +22,6 @@ let
   };
 
   config = {
-    ".gemini/config/config.json".telemetryEnabled = false;
     ".gemini/antigravity-cli/settings.json".showFeedbackSurvey = false;
   };
 

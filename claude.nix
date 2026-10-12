@@ -4,6 +4,7 @@
   ponytail,
   claude-code,
   nodejs,
+  writeText,
 }:
 let
   version = "2.1.274";
@@ -16,6 +17,16 @@ let
       platforms.linux-x64 = { inherit binary checksum; };
     };
   };
+
+  # flagSettings: перекрывают user/project/local, но не managed policy.
+  privacySettings = writeText "claude-privacy-settings.json" (builtins.toJSON {
+    autoMemoryEnabled = false;
+    autoDreamEnabled = false;
+    promptSuggestionEnabled = false;
+    awaySummaryEnabled = false;
+    autoUploadSessions = false;
+    remoteControlAtStartup = false;
+  });
 in
 symlinkJoin {
   inherit (package) name;
@@ -30,6 +41,9 @@ symlinkJoin {
       --set DISABLE_BUG_COMMAND 1 \
       --set CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC 1 \
       --set CLAUDE_CODE_DISABLE_AUTO_MEMORY 1 \
+      --set CLAUDE_CODE_DISABLE_ORG_MEMORY 1 \
+      --set CLAUDE_CODE_DISABLE_MEMORY_PERIODIC_RESYNC 1 \
+      --add-flags "--settings ${privacySettings}" \
       --add-flags "--plugin-dir ${ponytail}" \
       --prefix PATH : ${nodejs}/bin
   '';
