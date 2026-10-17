@@ -44,6 +44,9 @@ symlinkJoin {
       --set CLAUDE_CODE_DISABLE_AUTO_MEMORY 1 \
       --set CLAUDE_CODE_DISABLE_ORG_MEMORY 1 \
       --set CLAUDE_CODE_DISABLE_MEMORY_PERIODIC_RESYNC 1 \
+      --set DISABLE_GROWTHBOOK 1 \
+      --set DISABLE_AUTOUPDATER 1 \
+      --set DISABLE_INSTALLATION_CHECKS 1 \
       --add-flags "--settings ${settings}" \
       --add-flags "--plugin-dir ${ponytail}" \
       --prefix PATH : ${nodejs}/bin

@@ -75,6 +75,7 @@ symlinkJoin {
   nativeBuildInputs = [ makeShellWrapper ];
   postBuild = ''
     wrapProgram $out/bin/agy \
+      --set AGY_CLI_DISABLE_AUTO_UPDATE 1 \
       --run ${enforceConfig} \
       --run ${installPonytail}
   '';
