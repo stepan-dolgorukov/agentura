@@ -19,7 +19,8 @@ let
   };
 
   # flagSettings: перекрывают user/project/local, но не managed policy.
-  privacySettings = writeText "claude-privacy-settings.json" (builtins.toJSON {
+  settings = writeText "claude-settings.json" (builtins.toJSON {
+    theme = "auto";
     autoMemoryEnabled = false;
     autoDreamEnabled = false;
     promptSuggestionEnabled = false;
@@ -43,7 +44,7 @@ symlinkJoin {
       --set CLAUDE_CODE_DISABLE_AUTO_MEMORY 1 \
       --set CLAUDE_CODE_DISABLE_ORG_MEMORY 1 \
       --set CLAUDE_CODE_DISABLE_MEMORY_PERIODIC_RESYNC 1 \
-      --add-flags "--settings ${privacySettings}" \
+      --add-flags "--settings ${settings}" \
       --add-flags "--plugin-dir ${ponytail}" \
       --prefix PATH : ${nodejs}/bin
   '';
