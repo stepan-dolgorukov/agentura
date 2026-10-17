@@ -111,6 +111,8 @@ symlinkJoin {
         --set GROK_TURN_SUMMARY 0 \
         --set GROK_SESSION_RECAP 0 \
         --set GROK_RESPECT_GITIGNORE 1 \
+        --set GROK_THEME terminal \
+        --set GROK_TERMINAL_THEME 1 \
         --run ${privacyConfig} \
         --run ${installPonytail}
     done
