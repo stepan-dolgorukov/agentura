@@ -4,7 +4,7 @@
   makeShellWrapper,
   ponytail,
   fetchurl,
-  writeShellScript,
+  writeShellApplication,
   jq,
   antigravity-cli,
 }:
@@ -26,7 +26,10 @@ let
     ".gemini/antigravity-cli/settings.json".showFeedbackSurvey = false;
   };
 
-  enforceConfig = writeShellScript "agy-enforce-config" ''
+  enforceConfig = writeShellApplication {
+    name = "agy-enforce-config";
+    excludeShellChecks = [ "SC2016" ];
+    text = ''
     merge() {
       local file="$HOME/$1" overrides="$2" tmp
       local jq=${lib.getExe jq}
@@ -56,9 +59,12 @@ let
         merge ${lib.escapeShellArg file} ${lib.escapeShellArg (builtins.toJSON overrides)}
       '') config
     )}
-  '';
+    '';
+  };
 
-  installPonytail = writeShellScript "agy-install-ponytail" ''
+  installPonytail = writeShellApplication {
+    name = "agy-install-ponytail";
+    text = ''
     dest="$HOME/.gemini/config/plugins/ponytail"
     stamp="$dest/.agentura-source"
     if [ "$(cat "$stamp" 2>/dev/null || true)" = "${ponytail}" ]; then
@@ -67,7 +73,8 @@ let
     ${package}/bin/agy plugin install ${ponytail} >/dev/null 2>&1 &&
       printf '%s\n' ${ponytail} >"$stamp" ||
       echo "agy: не удалось установить плагин ponytail" >&2
-  '';
+    '';
+  };
 in
 symlinkJoin {
   inherit (package) name;
@@ -76,7 +83,7 @@ symlinkJoin {
   postBuild = ''
     wrapProgram $out/bin/agy \
       --set AGY_CLI_DISABLE_AUTO_UPDATE true \
-      --run ${enforceConfig} \
-      --run ${installPonytail}
+      --run ${lib.getExe enforceConfig} \
+      --run ${lib.getExe installPonytail}
   '';
 }

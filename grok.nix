@@ -4,7 +4,7 @@
   makeShellWrapper,
   ponytail,
   fetchurl,
-  writeShellScript,
+  writeShellApplication,
   jq,
   grok-build,
   python3,
@@ -22,7 +22,9 @@ let
   };
 
   # [harness] через GROK_CONFIG не принимается — только config.toml.
-  privacyConfig = writeShellScript "grok-privacy-config" ''
+  privacyConfig = writeShellApplication {
+    name = "grok-privacy-config";
+    text = ''
     cfg="''${GROK_HOME:-$HOME/.grok}/config.toml"
     ${python3.withPackages (ps: [ ps.tomlkit ])}/bin/python - "$cfg" <<'PY'
 import os, sys
@@ -73,9 +75,12 @@ except OSError as err:
     except OSError:
         pass
 PY
-  '';
+    '';
+  };
 
-  installPonytail = writeShellScript "grok-install-ponytail" ''
+  installPonytail = writeShellApplication {
+    name = "grok-install-ponytail";
+    text = ''
     grok=${package}/bin/grok
     src=${ponytail}
     if ! list=$("$grok" plugin list --json 2>/dev/null); then
@@ -89,7 +94,8 @@ PY
     "$grok" plugin install "$src" --trust >/dev/null 2>&1 &&
       "$grok" plugin enable ponytail >/dev/null 2>&1 ||
       echo "grok: не удалось установить плагин ponytail" >&2
-  '';
+    '';
+  };
 in
 symlinkJoin {
   inherit (package) name;
@@ -113,8 +119,8 @@ symlinkJoin {
         --set GROK_RESPECT_GITIGNORE 1 \
         --set GROK_THEME terminal \
         --set GROK_TERMINAL_THEME 1 \
-        --run ${privacyConfig} \
-        --run ${installPonytail}
+        --run ${lib.getExe privacyConfig} \
+        --run ${lib.getExe installPonytail}
     done
   '';
 }
