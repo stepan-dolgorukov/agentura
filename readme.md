@@ -2,6 +2,14 @@
 
 # Installation
 
+Agent installations declared in Nix programming language. First of all you need to install nix
+package manager & deployment system.
+```sh
+curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install | sh -s -- --daemon && \
+mkdir -p ~/.config/nix && \
+echo 'experimental-features = nix-command flakes' >~/.config/nix/nix.conf
+```
+
 ```sh
 git clone git@github.com:stepan-dolgorukov/agentura.git
 ```
