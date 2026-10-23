@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, tempfile
 from pathlib import Path
 import tomlkit
 
@@ -35,13 +35,14 @@ for key in keys:
     harness[key] = True
 
 path.parent.mkdir(parents=True, exist_ok=True)
-tmp = path.with_name(f".{path.name}.tmp")
+fd, tmp = tempfile.mkstemp(dir=path.parent)  # 0600, уникальное имя
 try:
-    tmp.write_text(tomlkit.dumps(doc))
+    with open(fd, "w") as file:
+        file.write(tomlkit.dumps(doc))
     os.replace(tmp, path)
 except OSError as err:
     print(f"grok: не удалось записать {path}: {err}", file=sys.stderr)
     try:
-        tmp.unlink()
+        os.unlink(tmp)
     except OSError:
         pass
