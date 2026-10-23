@@ -74,8 +74,8 @@ symlinkJoin {
         --set GROK_RESPECT_GITIGNORE 1 \
         --set GROK_THEME terminal \
         --set GROK_TERMINAL_THEME 1 \
-        --run ${lib.getExe privacyConfig} \
-        --run ${lib.getExe installPonytail}
+        --run "${lib.getExe privacyConfig} || true" \
+        --run "${lib.getExe installPonytail} || true"
     done
   '';
 }
