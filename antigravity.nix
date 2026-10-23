@@ -83,7 +83,7 @@ symlinkJoin {
   postBuild = ''
     wrapProgram $out/bin/agy \
       --set AGY_CLI_DISABLE_AUTO_UPDATE true \
-      --run ${lib.getExe enforceConfig} \
-      --run ${lib.getExe installPonytail}
+      --run "${lib.getExe enforceConfig} || true" \
+      --run "${lib.getExe installPonytail} || true"
   '';
 }
