@@ -29,7 +29,7 @@ if harness is None:
 elif not isinstance(harness, dict):
     print(f"grok: {path} [harness] не таблица, не изменяю его", file=sys.stderr)
     raise SystemExit(0)
-if all(harness.get(key) == True for key in keys):
+if all(harness.get(key) is True for key in keys):
     raise SystemExit(0)
 for key in keys:
     harness[key] = True
