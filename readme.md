@@ -7,7 +7,8 @@ package manager & deployment system.
 ```sh
 curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install | sh -s -- --daemon && \
 mkdir -p ~/.config/nix && \
-echo 'experimental-features = nix-command flakes' >~/.config/nix/nix.conf
+echo 'experimental-features = nix-command flakes' >~/.config/nix/nix.conf && \
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 ```
 
 ```sh
