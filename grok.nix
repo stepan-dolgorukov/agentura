@@ -57,25 +57,23 @@ symlinkJoin {
   paths = [ package ];
   nativeBuildInputs = [ makeShellWrapper ];
   postBuild = ''
-    for bin in grok agent; do
-      wrapProgram $out/bin/$bin \
-        --set GROK_TELEMETRY_ENABLED false \
-        --set GROK_TELEMETRY_MIXPANEL_ENABLED false \
-        --set GROK_TELEMETRY_TRACE_UPLOAD false \
-        --set GROK_ERROR_REPORTING false \
-        --set GROK_FEEDBACK_ENABLED false \
-        --set GROK_MEMORY false \
-        --set GROK_DISABLE_AUTOUPDATER 1 \
-        --set GROK_CAMPAIGNS 0 \
-        --set GROK_PROMPT_SUGGESTIONS 0 \
-        --set GROK_TITLE_REFRESH 0 \
-        --set GROK_TURN_SUMMARY 0 \
-        --set GROK_SESSION_RECAP 0 \
-        --set GROK_RESPECT_GITIGNORE 1 \
-        --set GROK_THEME terminal \
-        --set GROK_TERMINAL_THEME 1 \
-        --run "${lib.getExe privacyConfig} || true" \
-        --run "${lib.getExe installPonytail} || true"
-    done
+    wrapProgram $out/bin/grok \
+      --set GROK_TELEMETRY_ENABLED false \
+      --set GROK_TELEMETRY_MIXPANEL_ENABLED false \
+      --set GROK_TELEMETRY_TRACE_UPLOAD false \
+      --set GROK_ERROR_REPORTING false \
+      --set GROK_FEEDBACK_ENABLED false \
+      --set GROK_MEMORY false \
+      --set GROK_DISABLE_AUTOUPDATER 1 \
+      --set GROK_CAMPAIGNS 0 \
+      --set GROK_PROMPT_SUGGESTIONS 0 \
+      --set GROK_TITLE_REFRESH 0 \
+      --set GROK_TURN_SUMMARY 0 \
+      --set GROK_SESSION_RECAP 0 \
+      --set GROK_RESPECT_GITIGNORE 1 \
+      --set GROK_THEME terminal \
+      --set GROK_TERMINAL_THEME 1 \
+      --run "${lib.getExe privacyConfig} || true" \
+      --run "${lib.getExe installPonytail} || true"
   '';
 }
