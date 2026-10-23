@@ -16,7 +16,7 @@ let
   package = grok-build.overrideAttrs {
     inherit version;
     src = fetchurl {
-      url = "https://x.ai/cli/grok-${version}-linux-x86_64";
+      url = "https://storage.googleapis.com/grok-build-public-artifacts/cli/grok-${version}-linux-x86_64";
       inherit hash;
     };
   };
