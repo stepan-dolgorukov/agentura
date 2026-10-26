@@ -24,7 +24,6 @@ let
 
   privacyScript = writeText "grok-privacy.py" (builtins.readFile ./grok-privacy.py);
 
-  # [harness] через GROK_CONFIG не принимается — только config.toml.
   privacyConfig = writeShellApplication {
     name = "grok-privacy-config";
     text = ''

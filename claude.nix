@@ -11,14 +11,17 @@ let
   binary = "claude.zst";
   checksum = "ea049d5d46d5e6deaaadef9549f45879917d39a196d912c99bd3981a0cfdc7d8";
 
-  package = claude-code.override {
+  package = (claude-code.override {
     manifest = {
       inherit version;
       platforms.linux-x64 = { inherit binary checksum; };
     };
-  };
+  }).overrideAttrs (prev: {
+    postInstall = (prev.postInstall or "") + ''
+      sh ${./claude-privacy.sh} "$out/bin/.claude-wrapped"
+    '';
+  });
 
-  # flagSettings: перекрывают user/project/local, но не managed policy.
   settings = writeText "claude-settings.json" (builtins.toJSON {
     theme = "auto";
     autoMemoryEnabled = false;
